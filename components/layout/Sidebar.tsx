@@ -43,7 +43,7 @@ function Sidebar({ path }: Props) {
 	];
 
 	return (
-		<div className='flex h-screen w-[330px] flex-col gap-10 bg-white p-6'>
+		<div className='sticky top-0 flex h-screen w-[330px] flex-col gap-10 bg-white p-6'>
 			<Image
 				src='/Logo.png'
 				alt='logo'
