@@ -31,16 +31,18 @@ export interface ApiError {
 }
 
 export interface MetaType {
-	pagination: {
-		page: number;
-		pageSize: number;
-		pageCount: number;
-		total: number;
-	};
+	isFirstPage: boolean;
+	isLastPage: boolean;
+	currentPage: number;
+	previousPage: null | number;
+	nextPage: null | number;
+	pageCount: number;
+	totalCount: number;
 }
 
 export interface SuccessResponse<T> {
 	statusCode: number;
 	message: string;
 	data: T;
+	meta?: MetaType;
 }
