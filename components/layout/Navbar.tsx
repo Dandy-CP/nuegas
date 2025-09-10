@@ -2,20 +2,19 @@ import React from 'react';
 import { useAuth } from '@/hooks';
 import { Logout } from '@mui/icons-material';
 import {
-	Avatar,
 	IconButton,
 	ListItemIcon,
 	Menu,
 	MenuItem,
 	Tooltip,
 } from '@mui/material';
+import { UserAvatar } from '../elements';
 
 function Navbar() {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
 	const { authData, signOut } = useAuth();
 
-	const initialName = authData?.name.split('')[0].toUpperCase() ?? '';
 	const isMenuOpen = Boolean(anchorEl);
 
 	const handleOnClose = () => {
@@ -38,7 +37,7 @@ function Navbar() {
 					aria-haspopup='true'
 					aria-expanded={isMenuOpen ? 'true' : undefined}
 				>
-					<Avatar>{initialName}</Avatar>
+					<UserAvatar />
 				</IconButton>
 			</Tooltip>
 
