@@ -19,7 +19,7 @@ const theme = createTheme({
 		MuiButton: {
 			styleOverrides: {
 				root: {
-					borderRadius: 10,
+					borderRadius: 12,
 				},
 			},
 		},
@@ -27,8 +27,15 @@ const theme = createTheme({
 			styleOverrides: {
 				paper: {
 					backgroundColor: '#eff5ff',
-					borderRadius: 18,
+					borderRadius: 12,
 					padding: 5,
+				},
+			},
+		},
+		MuiCard: {
+			styleOverrides: {
+				root: {
+					borderRadius: 12,
 				},
 			},
 		},
