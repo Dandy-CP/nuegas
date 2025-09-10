@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { fetchData } from '@/config/request';
-import { MyClass } from '@/types/class.types';
+import { ClassDetail, MyClass } from '@/types/class.types';
 import { ApiError, SuccessResponse } from '@/types/client.types';
 
 export function GetMyClass(
@@ -32,6 +32,24 @@ export function GetJoinedClass(
 				inputParams: {
 					page: 1,
 					limit: 10,
+				},
+			});
+		},
+		...options,
+	});
+}
+
+export function GetClassDetail(
+	params: { class_id: string },
+	options?: UseQueryOptions<SuccessResponse<ClassDetail>, ApiError>
+) {
+	return useQuery<SuccessResponse<ClassDetail>, ApiError>({
+		queryKey: ['class-detail'],
+		queryFn: async () => {
+			return await fetchData({
+				url: '/class/detail',
+				inputParams: {
+					class_id: params.class_id,
 				},
 			});
 		},
