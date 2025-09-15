@@ -10,3 +10,7 @@ export const CreateClassSchema = z.object({
 export const JoinClassSchema = z.object({
 	class_code: z.string().nonempty({ error: 'Class code id Required' }),
 });
+
+export const AttachmentUrlSchema = z.object({
+	url: z.url({ error: 'Url not valid' }),
+});
