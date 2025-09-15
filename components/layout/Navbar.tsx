@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAuth } from '@/hooks';
 import { Logout } from '@mui/icons-material';
 import {
 	IconButton,
@@ -8,6 +7,7 @@ import {
 	MenuItem,
 	Tooltip,
 } from '@mui/material';
+import { useAuth } from '@/hooks';
 import { UserAvatar } from '../elements';
 
 function Navbar() {
