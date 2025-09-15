@@ -1,7 +1,8 @@
 import React from 'react';
-import { Card } from '@mui/material';
+import { Card, Skeleton } from '@mui/material';
 import { UserAvatar } from '@/components/elements';
 import { GetClassPostTimeline } from '@/service/api/post/post.query';
+import ErrorView from '../ErrorView';
 import { InputPost, PostCard } from './partials';
 
 interface Props {
@@ -17,15 +18,10 @@ function PostTimeline({
 	isClassOwner,
 	setIsWritingPost,
 }: Props) {
-	const { data, refetch } = GetClassPostTimeline(
-		{ class_id: classId },
-		{
-			queryKey: [],
-			enabled: classId !== undefined,
-		}
-	);
+	const { data, isError, hasNextPage, infiniteRef, refetch } =
+		GetClassPostTimeline({ class_id: classId });
 
-	const postTimeline = data?.data ?? [];
+	const postTimeline = data ?? [];
 
 	return (
 		<>
@@ -56,6 +52,7 @@ function PostTimeline({
 						postId={value.post_id}
 						username={value.user.name}
 						postContent={value.content}
+						attachment={value.attachment}
 						postedAt={value.created_at}
 						isClassOwner={isClassOwner}
 						onSuccess={() => {
@@ -63,7 +60,23 @@ function PostTimeline({
 						}}
 					/>
 				))}
+
+				{hasNextPage && (
+					<div ref={infiniteRef} className='flex flex-col gap-5'>
+						{Array(2)
+							.fill('')
+							.map((_, index) => (
+								<Skeleton key={index} variant='rounded' height={200} />
+							))}
+					</div>
+				)}
 			</div>
+
+			{isError && (
+				<div className='my-40 flex flex-col items-center'>
+					<ErrorView onRefetch={() => refetch()} />
+				</div>
+			)}
 		</>
 	);
 }

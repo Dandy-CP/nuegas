@@ -1,3 +1,5 @@
+import parse from 'html-react-parser';
+import moment from 'moment';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { Group, MoreVert } from '@mui/icons-material';
@@ -8,12 +10,13 @@ import {
 	IconButton,
 	Menu,
 	MenuItem,
+	Skeleton,
 } from '@mui/material';
-import parse from 'html-react-parser';
-import moment from 'moment';
 import { UserAvatar } from '@/components/elements';
 import { GetComment } from '@/service/api/comment/comment.query';
 import { DeletePost } from '@/service/api/post/post.mutation';
+import ErrorView from '../../ErrorView';
+import AttachmentPreview from './AttachmentPreview';
 import InputComment from './InputComment';
 import PostComment from './PostComment';
 
@@ -22,6 +25,7 @@ interface Props {
 	username: string;
 	postedAt: string;
 	postContent: string;
+	attachment: string[];
 	isClassOwner: boolean;
 	onSuccess: () => void;
 }
@@ -30,26 +34,22 @@ function PostCard({
 	postId,
 	username,
 	postContent,
+	attachment,
 	postedAt,
 	isClassOwner,
 	onSuccess,
 }: Props) {
 	const [optionElement, setOptionElement] = useState<null | HTMLElement>(null);
-	const [showAllComment, setIsShowAllComment] = useState(false);
+	const [commentLimit, setCommentLimit] = useState(1);
 	const openOption = Boolean(optionElement);
 
-	const { data, refetch } = GetComment(
-		{
-			post_id: postId,
-			page: 1,
-			limit: 10,
-		},
-		{
-			queryKey: [postId],
-		}
-	);
+	const { data, isError, hasNextPage, infiniteRef, refetch } = GetComment({
+		post_id: postId,
+		limit: commentLimit,
+	});
 
-	const comment = data?.data ?? [];
+	const comment = data?.items ?? [];
+	const totalComment = data?.totalItems ?? 0;
 
 	const { mutateAsync } = DeletePost(
 		{ post_id: postId },
@@ -110,21 +110,25 @@ function PostCard({
 
 			<div className='my-5'>{parse(postContent)}</div>
 
+			{attachment.length !== 0 && <AttachmentPreview attachment={attachment} />}
+
 			<Divider sx={{ marginY: 2 }} />
 
 			{comment.length !== 0 && (
 				<Button
+					variant='text'
 					size='small'
 					startIcon={<Group />}
-					sx={{ marginBottom: 1 }}
-					onClick={() => setIsShowAllComment((prev) => !prev)}
+					onClick={() => {
+						setCommentLimit(5);
+					}}
 				>
-					<p>{comment.length} Class Comment</p>
+					{totalComment} Comment Class
 				</Button>
 			)}
 
-			<div className='flex flex-col'>
-				{comment.slice(showAllComment ? 0 : comment.length - 1).map((value) => (
+			<div className='flex max-h-[200px] flex-col overflow-auto'>
+				{comment.map((value) => (
 					<PostComment
 						key={value.comment_id}
 						commentId={value.comment_id}
@@ -136,7 +140,27 @@ function PostCard({
 						}}
 					/>
 				))}
+
+				{hasNextPage && commentLimit !== 1 && (
+					<div ref={infiniteRef} className='mt-3 flex flex-col gap-3'>
+						{Array(2)
+							.fill('')
+							.map((_, index) => (
+								<Skeleton key={index} variant='rounded' height={80} />
+							))}
+					</div>
+				)}
 			</div>
+
+			{isError && (
+				<div className='mt-5'>
+					<ErrorView
+						onRefetch={() => {
+							refetch();
+						}}
+					/>
+				</div>
+			)}
 
 			<InputComment
 				paramsId={{ post_id: postId }}

@@ -7,8 +7,11 @@ import Editor, {
 } from 'react-simple-wysiwyg';
 import { toast } from 'react-toastify';
 import { Link, Upload } from '@mui/icons-material';
-import { Button, IconButton, Tooltip } from '@mui/material';
+import { Button, Dialog, IconButton, Tooltip } from '@mui/material';
 import { CreatePost } from '@/service/api/post/post.mutation';
+import AttachmentLinkForm from '../AttachmentLinkForm';
+import UploadFileForm from '../UploadFileForm';
+import AttachmentPreview from './AttachmentPreview';
 
 interface Props {
 	classId: string;
@@ -18,6 +21,9 @@ interface Props {
 
 function InputPost({ classId, setIsWritingPost, onSuccess }: Props) {
 	const [postContent, setPostContent] = useState('');
+	const [attachment, setAttachment] = useState<string[]>([]);
+	const [isAttachmentDialogOpen, setIsAttachmentDialogOpen] = useState(false);
+	const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
 
 	const { mutateAsync, isPending } = CreatePost(
 		{ class_id: classId },
@@ -33,9 +39,20 @@ function InputPost({ classId, setIsWritingPost, onSuccess }: Props) {
 		}
 	);
 
+	function handleOnAddAttachment(url: string) {
+		setAttachment((prev) => [...prev, url]);
+	}
+
+	function handleOnDeleteAttachment(index: number) {
+		const updatedAttachment = attachment.filter((_, idx) => idx !== index);
+
+		setAttachment(updatedAttachment);
+	}
+
 	async function onSubmitPost() {
 		mutateAsync({
 			content: postContent,
+			attachment: attachment,
 		});
 	}
 
@@ -62,16 +79,22 @@ function InputPost({ classId, setIsWritingPost, onSuccess }: Props) {
 				</Toolbar>
 			</Editor>
 
-			<div className='mt-5 flex flex-row justify-between'>
+			<div className='mt-5 mb-5 flex flex-row justify-between'>
 				<div className='flex flex-row gap-3'>
 					<Tooltip title='Upload file'>
-						<IconButton disabled={isPending}>
+						<IconButton
+							disabled={isPending}
+							onClick={() => setIsUploadDialogOpen(true)}
+						>
 							<Upload />
 						</IconButton>
 					</Tooltip>
 
 					<Tooltip title='Attach Link'>
-						<IconButton disabled={isPending}>
+						<IconButton
+							disabled={isPending}
+							onClick={() => setIsAttachmentDialogOpen(true)}
+						>
 							<Link />
 						</IconButton>
 					</Tooltip>
@@ -96,6 +119,26 @@ function InputPost({ classId, setIsWritingPost, onSuccess }: Props) {
 					</Button>
 				</div>
 			</div>
+
+			<AttachmentPreview
+				showDelete
+				attachment={attachment}
+				onDeleteAttachment={handleOnDeleteAttachment}
+			/>
+
+			<Dialog fullWidth open={isAttachmentDialogOpen}>
+				<AttachmentLinkForm
+					handleOnAddAttachment={handleOnAddAttachment}
+					setIsAttachmentDialogOpen={setIsAttachmentDialogOpen}
+				/>
+			</Dialog>
+
+			<Dialog fullWidth open={isUploadDialogOpen}>
+				<UploadFileForm
+					setIsUploadDialogOpen={setIsUploadDialogOpen}
+					handleOnAddAttachment={handleOnAddAttachment}
+				/>
+			</Dialog>
 		</div>
 	);
 }

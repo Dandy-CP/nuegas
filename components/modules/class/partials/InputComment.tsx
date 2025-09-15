@@ -34,6 +34,11 @@ function InputComment({ paramsId, onSuccess }: Props) {
 				size='small'
 				disabled={isPending}
 				onChange={(event) => setContent(event.target.value)}
+				onKeyDown={(event) => {
+					if (event.code === 'Enter' && content.length !== 0) {
+						mutateAsync({ content: content });
+					}
+				}}
 			/>
 
 			<IconButton
