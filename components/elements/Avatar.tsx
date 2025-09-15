@@ -1,13 +1,15 @@
 import React from 'react';
-import { useAuth } from '@/hooks';
 import { Avatar as AvatarMUI } from '@mui/material';
+import { useAuth } from '@/hooks';
 
 function Avatar() {
 	const { authData } = useAuth();
 
 	return (
 		<div>
-			<AvatarMUI src=''>{authData?.name.split('')[0].toUpperCase()}</AvatarMUI>
+			<AvatarMUI src={authData?.profile_image ?? ''}>
+				{authData?.name.split('')[0].toUpperCase()}
+			</AvatarMUI>
 		</div>
 	);
 }
