@@ -1,20 +1,68 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import {
+	QueryKey,
+	useInfiniteQuery,
+	UseInfiniteQueryOptions,
+} from '@tanstack/react-query';
+import { useInfiniteScroll } from '@/hooks';
 import { fetchData } from '@/config/request';
-import { ApiError, SuccessResponse } from '@/types/client.types';
+import { ApiError, SuccessResponsePagination } from '@/types/client.types';
 import { Comment } from '@/types/comment.types';
+
+interface InfiniteQuerySelectResult<T> {
+	items: T[];
+	totalItems: number;
+}
 
 export function GetComment(
 	params?: { [key: string]: string | number },
-	options?: UseQueryOptions<SuccessResponse<Comment[]>, ApiError>
+	options?: UseInfiniteQueryOptions<
+		SuccessResponsePagination<Comment[]>,
+		ApiError,
+		InfiniteQuerySelectResult<Comment>,
+		QueryKey,
+		number
+	>
 ) {
-	return useQuery<SuccessResponse<Comment[]>, ApiError>({
-		queryKey: ['comment'],
-		queryFn: async () => {
+	const query = useInfiniteQuery<
+		SuccessResponsePagination<Comment[]>,
+		ApiError,
+		InfiniteQuerySelectResult<Comment>,
+		QueryKey,
+		number
+	>({
+		queryKey: ['comment', params?.post_id, params?.limit],
+		initialPageParam: 1,
+		select: (data) => ({
+			items: data.pages.flatMap((page) => page.data),
+			totalItems: data.pages[0].meta.totalCount,
+		}),
+		queryFn: async ({ pageParam }) => {
 			return await fetchData({
 				url: '/comment',
-				inputParams: params,
+				inputParams: {
+					page: pageParam,
+					limit: params?.limit ?? 5,
+					...params,
+				},
 			});
+		},
+		getNextPageParam: ({ meta }) => {
+			if (!meta.isLastPage) {
+				return meta.nextPage;
+			}
+
+			return undefined;
 		},
 		...options,
 	});
+
+	const infiniteRef = useInfiniteScroll<HTMLDivElement>({
+		hasNextPage: query.hasNextPage,
+		fetchNextPage: query.fetchNextPage,
+	});
+
+	return {
+		...query,
+		infiniteRef,
+	};
 }

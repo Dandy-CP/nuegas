@@ -1,24 +1,57 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import {
+	QueryKey,
+	useInfiniteQuery,
+	UseInfiniteQueryOptions,
+} from '@tanstack/react-query';
+import { useInfiniteScroll } from '@/hooks';
 import { fetchData } from '@/config/request';
-import { ApiError, SuccessResponse } from '@/types/client.types';
+import { ApiError, SuccessResponsePagination } from '@/types/client.types';
 import { Post } from '@/types/post.types';
 
 export function GetClassPostTimeline(
 	params?: { [key: string]: string | number },
-	options?: UseQueryOptions<SuccessResponse<Post[]>, ApiError>
+	options?: UseInfiniteQueryOptions<
+		SuccessResponsePagination<Post[]>, // Success Response from API
+		ApiError, // Error Response
+		Post[], // Data Response
+		QueryKey, // Query-key type
+		number // page params type
+	>
 ) {
-	return useQuery<SuccessResponse<Post[]>, ApiError>({
+	const query = useInfiniteQuery<
+		SuccessResponsePagination<Post[]>,
+		ApiError,
+		Post[],
+		QueryKey,
+		number
+	>({
 		queryKey: ['post-timeline'],
-		queryFn: async () => {
+		enabled: params?.class_id !== undefined,
+		initialPageParam: 1,
+		select: (data) => data.pages.flatMap((page) => page.data),
+		queryFn: async ({ pageParam }) => {
 			return await fetchData({
 				url: '/post/timeline',
-				inputParams: {
-					class_id: params?.class_id ?? '',
-					page: params?.page ?? 1,
-					limit: params?.limit ?? 10,
-				},
+				inputParams: { page: pageParam, limit: 10, ...params },
 			});
+		},
+		getNextPageParam: ({ meta }) => {
+			if (!meta.isLastPage) {
+				return meta.nextPage;
+			}
+
+			return undefined;
 		},
 		...options,
 	});
+
+	const infiniteRef = useInfiniteScroll<HTMLDivElement>({
+		hasNextPage: query.hasNextPage,
+		fetchNextPage: query.fetchNextPage,
+	});
+
+	return {
+		...query,
+		infiniteRef,
+	};
 }

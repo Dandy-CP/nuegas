@@ -14,6 +14,7 @@ export function CreatePost(
 				method: 'POST',
 				body: {
 					content: body.content,
+					attachment: body.attachment,
 				},
 				inputParams: {
 					class_id: params?.class_id,

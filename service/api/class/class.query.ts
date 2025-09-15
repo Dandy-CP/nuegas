@@ -40,7 +40,7 @@ export function GetJoinedClass(
 }
 
 export function GetClassDetail(
-	params: { class_id: string },
+	params?: { [key: string]: string | number },
 	options?: UseQueryOptions<SuccessResponse<ClassDetail>, ApiError>
 ) {
 	return useQuery<SuccessResponse<ClassDetail>, ApiError>({
@@ -49,7 +49,7 @@ export function GetClassDetail(
 			return await fetchData({
 				url: '/class/detail',
 				inputParams: {
-					class_id: params.class_id,
+					...params,
 				},
 			});
 		},
