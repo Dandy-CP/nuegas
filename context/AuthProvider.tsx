@@ -1,7 +1,8 @@
-import { createContext, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
-import { AuthResponse } from '@/types/auth.types';
+import { useRouter } from 'next/router';
+import { createContext, useEffect, useMemo, useState } from 'react';
+import { fetchData } from '@/config/request';
+import { AuthResponse, LoggedInUser } from '@/types/auth.types';
 import { SuccessResponse } from '@/types/client.types';
 
 interface Props {
@@ -9,14 +10,14 @@ interface Props {
 }
 
 export type AuthContextType = {
-	authData: AuthResponse | null;
+	authData: LoggedInUser | undefined;
 	signIn: (access: SuccessResponse<AuthResponse>) => Promise<void>;
 	signOut: () => Promise<void>;
 	isAuth: () => Promise<void>;
 };
 
 const authContextDefaultValues: AuthContextType = {
-	authData: null,
+	authData: undefined,
 	signIn: async (access: SuccessResponse<AuthResponse>) => {},
 	signOut: async () => {},
 	isAuth: async () => {},
@@ -27,12 +28,24 @@ export const AuthContext = createContext<AuthContextType>(
 );
 
 const AuthProvider = ({ children }: Props) => {
-	const [authData, setAuthData] = useState<AuthResponse | null>(null);
+	const [authData, setAuthData] = useState<LoggedInUser>();
 	const router = useRouter();
+
+	async function getLoggedInUser() {
+		try {
+			const response = await fetchData<SuccessResponse<LoggedInUser>>({
+				url: '/auth/logged-user',
+			});
+
+			return response.data;
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	const signIn = async (access: SuccessResponse<AuthResponse>) => {
 		try {
-			const { name, email, access_token, refresh_token } = access.data;
+			const { access_token, refresh_token } = access.data;
 
 			// set token JWT to cookies
 			Cookies.set('token', access_token, {
@@ -46,10 +59,9 @@ const AuthProvider = ({ children }: Props) => {
 				secure: true,
 			});
 
-			// set user data object to local storage
-			localStorage.setItem('userData', JSON.stringify({ name, email }));
+			const loggedInUser = await getLoggedInUser();
 
-			setAuthData(access.data);
+			setAuthData(loggedInUser);
 			router.replace('/dashboard');
 		} catch (error) {
 			console.log(error);
@@ -59,8 +71,9 @@ const AuthProvider = ({ children }: Props) => {
 	const signOut = async () => {
 		try {
 			Cookies.remove('token');
-			localStorage.removeItem('userData');
-			setAuthData(null);
+			Cookies.remove('refresh_token');
+
+			setAuthData(undefined);
 			router.replace('/auth');
 		} catch (error) {
 			console.log(error);
@@ -69,13 +82,12 @@ const AuthProvider = ({ children }: Props) => {
 
 	const isAuth = async () => {
 		try {
-			const userValue = localStorage.getItem('userData');
+			const loggedInUser = await getLoggedInUser();
 
-			if (userValue !== null) {
-				const userJSON = JSON.parse(userValue) as AuthResponse;
-				setAuthData(userJSON);
+			if (loggedInUser) {
+				setAuthData(loggedInUser);
 			} else {
-				setAuthData(null);
+				setAuthData(undefined);
 			}
 		} catch (error) {
 			console.log(error);
@@ -84,6 +96,8 @@ const AuthProvider = ({ children }: Props) => {
 
 	useEffect(() => {
 		isAuth();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const valueContext = useMemo(
