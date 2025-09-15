@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from 'axios';
+
 export type MutationMethodType = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export interface FetchOptions {
@@ -11,6 +13,7 @@ export interface MutationDataOptions {
 	body?: { [key: string]: any };
 	baseURL?: string;
 	inputParams?: { [key: string]: any };
+	config?: AxiosRequestConfig;
 }
 
 export interface MutationFormDataOptions {
@@ -19,6 +22,7 @@ export interface MutationFormDataOptions {
 	body: { [key: string]: any };
 	baseURL?: string;
 	inputParams?: { [key: string]: any };
+	config?: AxiosRequestConfig;
 }
 
 export interface ApiError {
@@ -44,5 +48,11 @@ export interface SuccessResponse<T> {
 	statusCode: number;
 	message: string;
 	data: T;
-	meta?: MetaType;
+}
+
+export interface SuccessResponsePagination<T> {
+	statusCode: number;
+	message: string;
+	data: T;
+	meta: MetaType;
 }

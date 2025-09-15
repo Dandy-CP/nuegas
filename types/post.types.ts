@@ -2,6 +2,7 @@ import { Comment } from './comment.types';
 
 export interface CreatePostBody {
 	content: string;
+	attachment: string[];
 }
 
 export interface Post {

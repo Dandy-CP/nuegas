@@ -27,3 +27,11 @@ export interface SignUpResponse {
 	created_at: string;
 	updated_at: string;
 }
+
+export interface LoggedInUser {
+	user_id: string;
+	email: string;
+	name: string;
+	profile_image: null | string;
+	is_2fa_active: boolean;
+}
