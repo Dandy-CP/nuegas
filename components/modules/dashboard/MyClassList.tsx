@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import Image from 'next/image';
+import { useState } from 'react';
 import { Add } from '@mui/icons-material';
 import { Button, Dialog, Skeleton } from '@mui/material';
 import { ClassCard } from '@/components/elements';

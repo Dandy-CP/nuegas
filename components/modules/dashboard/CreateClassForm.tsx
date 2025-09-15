@@ -1,11 +1,11 @@
 import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { CreateClassSchema } from '@/schema/class.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, DialogActions, DialogTitle, TextField } from '@mui/material';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { CreateClass } from '@/service/api/class/class.mutation';
 import { CreateClassBody } from '@/types/class.types';
+import { CreateClassSchema } from '@/schema/class.schema';
 
 interface Props {
 	setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
