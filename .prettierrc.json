@@ -12,15 +12,16 @@
 		"prettier-plugin-tailwindcss"
 	],
 	"importOrder": [
-		"^react",
-		"^next",
-		"<BUILTIN_MODULES>",
 		"<THIRD_PARTY_MODULES>",
+		"^@mui/(.*)$",
+		"^@hookform/(.*)$",
 		"^@/components/(.*)$",
-		"^@/hooks/(.*)$",
-		"^@/config/(.*)$",
+		"^@/hooks",
+		"^@/config",
 		"^@/service/(.*)$",
-		"^@/types/(.*)$",
+		"^@/context",
+		"^@/types",
+		"^@/schema",
 		"^@/public/(.*)$",
 		"^@/styles/(.*)$",
 		"^[./]"
