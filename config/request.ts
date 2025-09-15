@@ -40,6 +40,7 @@ export async function mutationData<T>({
 	body,
 	baseURL,
 	inputParams,
+	config,
 }: MutationDataOptions): Promise<T> {
 	let params = '';
 
@@ -63,6 +64,7 @@ export async function mutationData<T>({
 					'Content-Type': 'application/json',
 				},
 				data: body,
+				...config,
 			});
 
 			const json = await response.data;
@@ -79,6 +81,7 @@ export async function mutationFormData<T>({
 	body,
 	method,
 	inputParams,
+	config,
 }: MutationFormDataOptions): Promise<T> {
 	let params = '';
 
@@ -109,6 +112,7 @@ export async function mutationFormData<T>({
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
+				...config,
 			});
 
 			const json = await response.data;
