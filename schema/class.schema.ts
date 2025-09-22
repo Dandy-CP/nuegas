@@ -14,3 +14,7 @@ export const JoinClassSchema = z.object({
 export const AttachmentUrlSchema = z.object({
 	url: z.url({ error: 'Url not valid' }),
 });
+
+export const InviteMemberSchema = z.object({
+	email: z.email({ error: 'Email not valid' }),
+});
