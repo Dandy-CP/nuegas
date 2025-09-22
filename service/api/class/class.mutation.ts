@@ -1,6 +1,10 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { mutationData } from '@/config/request';
-import { CreateClassBody, JoinClassBody } from '@/types/class.types';
+import {
+	CreateClassBody,
+	InviteMemberBody,
+	JoinClassBody,
+} from '@/types/class.types';
 import { ApiError } from '@/types/client.types';
 
 export function CreateClass(
@@ -27,8 +31,48 @@ export function JoinClass(
 	return useMutation<any, ApiError, JoinClassBody>({
 		mutationFn: async (body) => {
 			return await mutationData({
-				url: `/class/join-class?class_code=${body.class_code}`,
+				url: '/class/join-class',
 				method: 'POST',
+				inputParams: {
+					class_code: body.class_code,
+				},
+			});
+		},
+		...options,
+	});
+}
+
+export function InviteClassMember(
+	options?: UseMutationOptions<any, ApiError, InviteMemberBody>
+) {
+	return useMutation<any, ApiError, InviteMemberBody>({
+		mutationFn: async (body) => {
+			return await mutationData({
+				url: '/class/invite',
+				method: 'POST',
+				inputParams: {
+					class_id: body.class_id,
+				},
+				body: {
+					email: body.email,
+				},
+			});
+		},
+		...options,
+	});
+}
+
+export function DeleteClassMember(
+	options?: UseMutationOptions<any, ApiError, { member_id: string }>
+) {
+	return useMutation<any, ApiError, { member_id: string }>({
+		mutationFn: async (body) => {
+			return await mutationData({
+				url: '/class/member',
+				method: 'DELETE',
+				inputParams: {
+					member_id: body.member_id,
+				},
 			});
 		},
 		...options,
