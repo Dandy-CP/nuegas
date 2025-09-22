@@ -1,23 +1,17 @@
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { MoreVert, Settings } from '@mui/icons-material';
 import { Button, Card, IconButton, Tooltip } from '@mui/material';
-import { GetClassDetail } from '@/service/api/class/class.query';
+import { ClassDetail } from '@/types/class.types';
 import PostTimeline from './PostTimeline';
 
-function ClassForum() {
+interface Props {
+	classId: string;
+	classDetail?: ClassDetail;
+	isClassOwner: boolean;
+}
+
+function ClassForum({ classId, classDetail, isClassOwner }: Props) {
 	const [isWritingPost, setIsWritingPost] = useState(false);
-
-	const router = useRouter();
-	const classId = router.query.classId as string;
-
-	const { data } = GetClassDetail(
-		{ class_id: classId },
-		{ queryKey: [classId], enabled: classId !== undefined }
-	);
-
-	const classDetail = data?.data;
-	const isClassOwner = data?.data.isOwner ?? false;
 
 	return (
 		<div>
