@@ -94,3 +94,16 @@ export interface AttachmentMeta {
 	url: string;
 	type: string;
 }
+
+export interface ClassMember {
+	class_member_id: string;
+	role: string;
+	created_at: string;
+	updated_at: string;
+	user: User;
+}
+
+export interface InviteMemberBody {
+	class_id: string;
+	email: string[];
+}
