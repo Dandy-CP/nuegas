@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks';
 import { DeleteComment } from '@/service/api/comment/comment.mutation';
 
 interface Props {
+	showAvatar?: boolean;
 	commentId: string;
 	username: string;
 	commentedAt: string;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 function PostComment({
+	showAvatar = true,
 	commentId,
 	username,
 	content,
@@ -41,14 +43,14 @@ function PostComment({
 
 	return (
 		<div className='flex flex-row items-center gap-5 rounded-md p-3 hover:bg-gray-100'>
-			<UserAvatar />
+			{showAvatar && <UserAvatar />}
 
 			<div className='flex w-full flex-row items-center justify-between'>
 				<div>
 					<div className='flex flex-row items-center gap-2'>
 						<p className='text-sm font-semibold'>{username}</p>
 						<p className='text-xs text-gray-500'>
-							{moment(commentedAt).format('lll')}
+							{moment(commentedAt).format('ll')}
 						</p>
 					</div>
 

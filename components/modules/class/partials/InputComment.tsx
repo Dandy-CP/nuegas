@@ -7,10 +7,11 @@ import { CreateComment } from '@/service/api/comment/comment.mutation';
 
 interface Props {
 	paramsId: { [key: string]: string | number };
+	showAvatar?: boolean;
 	onSuccess: () => void;
 }
 
-function InputComment({ paramsId, onSuccess }: Props) {
+function InputComment({ paramsId, showAvatar = true, onSuccess }: Props) {
 	const [content, setContent] = useState('');
 
 	const { mutateAsync, isPending } = CreateComment(paramsId, {
@@ -24,8 +25,8 @@ function InputComment({ paramsId, onSuccess }: Props) {
 	});
 
 	return (
-		<div className='mt-5 flex flex-row justify-between gap-5'>
-			<UserAvatar />
+		<div className='mt-5 flex flex-row justify-between gap-3'>
+			{showAvatar && <UserAvatar />}
 
 			<TextField
 				value={content}
