@@ -18,3 +18,18 @@ export const AttachmentUrlSchema = z.object({
 export const InviteMemberSchema = z.object({
 	email: z.email({ error: 'Email not valid' }),
 });
+
+export const CreateAssignmentSchema = z.object({
+	title: z.string().nonempty({ error: 'Title is required' }),
+	content: z.string().nonempty({ error: 'Content is required' }),
+	// topic: z.string(),
+	// attachment: z.array(z.string()),
+	start_date: z.string().nonempty({ error: 'Start date is required' }),
+	due_date: z.string().nonempty({ error: 'End date is required' }),
+});
+
+export const GivePointResultSchema = z.object({
+	point: z
+		.number({ error: 'Point must be 1 - 100' })
+		.nonnegative({ error: 'Number cannot be negative' }),
+});
