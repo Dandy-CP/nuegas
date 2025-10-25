@@ -54,6 +54,16 @@ export interface ClassMember {
 	user: User;
 }
 
+export interface PendingMember {
+	id: string;
+	email: string;
+	class_id: string;
+	token: string;
+	status: string;
+	created_at: string;
+	expires_at: string;
+}
+
 export interface User {
 	user_id: string;
 	name: string;
