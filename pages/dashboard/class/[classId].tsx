@@ -2,7 +2,11 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Divider, Tab, Tabs } from '@mui/material';
 import { ErrorView } from '@/components/modules';
-import { ClassForum, ClassMember } from '@/components/modules/class';
+import {
+	ClassAssignment,
+	ClassForum,
+	ClassMember,
+} from '@/components/modules/class';
 import { GetClassDetail } from '@/service/api/class/class.query';
 
 function ClassDetailPage() {
@@ -36,7 +40,6 @@ function ClassDetailPage() {
 			>
 				<Tab label='Forum' />
 				<Tab label='Assignment' />
-				<Tab label='Quiz' />
 				<Tab label='Member' />
 			</Tabs>
 
@@ -51,11 +54,15 @@ function ClassDetailPage() {
 					/>
 				)}
 
-				{tabValue === 1 && <h1>Assignment</h1>}
+				{tabValue === 1 && (
+					<ClassAssignment
+						classId={classId}
+						isClassOwner={isClassOwner}
+						className={classDetail?.name}
+					/>
+				)}
 
-				{tabValue === 2 && <h1>Quiz</h1>}
-
-				{tabValue === 3 && (
+				{tabValue === 2 && (
 					<ClassMember classId={classId} isClassOwner={isClassOwner} />
 				)}
 			</div>
