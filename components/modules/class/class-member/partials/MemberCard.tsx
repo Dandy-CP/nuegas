@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { MoreVert } from '@mui/icons-material';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
-import { DeleteClassMember } from '@/service/api/class/class.mutation';
+import {
+	DeleteClassMember,
+	DeletePendingMember,
+} from '@/service/api/class/class.mutation';
 
 interface Props {
+	type?: 'MEMBER' | 'PENDING';
 	profileImage: string | null;
-	role: string;
 	name: string;
 	memberId: string;
 	userId: string;
@@ -16,8 +19,8 @@ interface Props {
 }
 
 function MemberCard({
+	type = 'MEMBER',
 	name,
-	role,
 	profileImage,
 	memberId,
 	isClassOwner,
@@ -27,14 +30,32 @@ function MemberCard({
 	const [optionElement, setOptionElement] = useState<null | HTMLElement>(null);
 	const openOption = Boolean(optionElement);
 
-	const { mutateAsync, isPending } = DeleteClassMember({
-		onSuccess() {
-			onRefetch && onRefetch();
-		},
-		onError() {
-			toast.error('Error on remove member');
-		},
-	});
+	const { mutateAsync, isPending } = DeleteClassMember(
+		{ member_id: memberId },
+		{
+			onSuccess() {
+				onRefetch && onRefetch();
+			},
+			onError() {
+				toast.error('Error on remove member');
+			},
+		}
+	);
+
+	const {
+		mutateAsync: requestDeletePendingMember,
+		isPending: isDeletePending,
+	} = DeletePendingMember(
+		{ invitation_id: memberId },
+		{
+			onSuccess() {
+				onRefetch && onRefetch();
+			},
+			onError() {
+				toast.error('Error on remove pending member');
+			},
+		}
+	);
 
 	return (
 		<div className='flex cursor-pointer flex-row items-center justify-between rounded-lg p-3 hover:bg-gray-200'>
@@ -48,7 +69,7 @@ function MemberCard({
 
 			{showOption && (
 				<IconButton
-					disabled={isPending}
+					disabled={isPending || isDeletePending}
 					onClick={(event) => setOptionElement(event.currentTarget)}
 				>
 					<MoreVert />
@@ -66,25 +87,27 @@ function MemberCard({
 					},
 				}}
 			>
-				<MenuItem
-					onClick={() => {
-						setOptionElement(null);
-					}}
-				>
-					Send Message
-				</MenuItem>
+				{type === 'MEMBER' && (
+					<MenuItem
+						onClick={() => {
+							setOptionElement(null);
+						}}
+					>
+						Send Message
+					</MenuItem>
+				)}
 
 				{isClassOwner && (
 					<MenuItem
 						onClick={() => {
 							setOptionElement(null);
-							mutateAsync({
-								member_id: memberId,
-							});
+
+							if (type === 'MEMBER') mutateAsync();
+							if (type === 'PENDING') requestDeletePendingMember();
 						}}
 						sx={{ color: 'red' }}
 					>
-						Remove Member
+						{type === 'MEMBER' ? 'Remove Member' : 'Remove Pending Member'}
 					</MenuItem>
 				)}
 			</Menu>

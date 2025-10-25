@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { PersonAddOutlined } from '@mui/icons-material';
 import { Dialog, Divider, IconButton } from '@mui/material';
-import { GetClassMember } from '@/service/api/class/class.query';
+import {
+	GetClassMember,
+	GetPendingMember,
+} from '@/service/api/class/class.query';
 import ErrorView from '../../ErrorView';
 import InviteMemberDialog from './partials/InviteMemberDialog';
 import MemberCard from './partials/MemberCard';
@@ -15,8 +18,14 @@ function ClassMember({ classId, isClassOwner }: Props) {
 	const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
 	const { data, isError, refetch } = GetClassMember({ class_id: classId });
+	const {
+		data: pendingMemberData,
+		isError: isPendingMemberError,
+		refetch: refetchPendingMember,
+	} = GetPendingMember({ class_id: classId });
 
 	const member = data?.items?.filter((value) => value.role !== 'OWNER') ?? [];
+	const pendingMember = pendingMemberData?.data ?? [];
 	const owner = data?.items.filter((value) => value.role === 'OWNER') ?? [];
 
 	if (isError) {
@@ -36,7 +45,6 @@ function ClassMember({ classId, isClassOwner }: Props) {
 				<MemberCard
 					isClassOwner={isClassOwner}
 					name={owner[0]?.user.name}
-					role={owner[0]?.role}
 					profileImage={owner[0]?.user.profile_image}
 					memberId={owner[0]?.class_member_id}
 					userId={owner[0]?.user.user_id}
@@ -46,6 +54,39 @@ function ClassMember({ classId, isClassOwner }: Props) {
 					}}
 				/>
 			</div>
+
+			{isClassOwner && pendingMember.length !== 0 && (
+				<div className='mt-10'>
+					<div className='flex flex-row items-center justify-between'>
+						<h1 className='text-2xl font-semibold'>Pending Member</h1>
+
+						<p className='text-sm font-semibold'>
+							{pendingMember.length ?? 0} Pending Member
+						</p>
+					</div>
+
+					<Divider sx={{ marginY: 2 }} />
+
+					{pendingMember.map((value) => (
+						<MemberCard
+							key={value.id}
+							type='PENDING'
+							isClassOwner={isClassOwner}
+							name={value.email}
+							profileImage=''
+							memberId={value.id}
+							userId={value.id}
+							onRefetch={() => {
+								refetchPendingMember();
+							}}
+						/>
+					))}
+
+					{isPendingMemberError && (
+						<ErrorView onRefetch={() => refetchPendingMember()} />
+					)}
+				</div>
+			)}
 
 			<div className='mt-10'>
 				<div className='flex flex-row items-center justify-between'>
@@ -71,7 +112,6 @@ function ClassMember({ classId, isClassOwner }: Props) {
 						key={value.class_member_id}
 						isClassOwner={isClassOwner}
 						name={value.user.name}
-						role={value.role}
 						profileImage={value.user.profile_image}
 						memberId={value.class_member_id}
 						userId={value.user.user_id}
@@ -88,6 +128,7 @@ function ClassMember({ classId, isClassOwner }: Props) {
 					setIsInviteDialogOpen={setIsInviteDialogOpen}
 					onRefetch={() => {
 						refetch();
+						refetchPendingMember();
 					}}
 				/>
 			</Dialog>
