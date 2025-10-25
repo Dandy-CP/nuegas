@@ -7,7 +7,12 @@ import {
 } from '@tanstack/react-query';
 import { useInfiniteScroll } from '@/hooks';
 import { fetchData } from '@/config/request';
-import { ClassDetail, ClassMember, MyClass } from '@/types/class.types';
+import {
+	ClassDetail,
+	ClassMember,
+	MyClass,
+	PendingMember,
+} from '@/types/class.types';
 import {
 	ApiError,
 	SuccessResponse,
@@ -122,4 +127,22 @@ export function GetClassMember(
 		...query,
 		infiniteRef,
 	};
+}
+
+export function GetPendingMember(
+	params?: { [key: string]: string | number },
+	options?: UseQueryOptions<SuccessResponse<PendingMember[]>, ApiError>
+) {
+	return useQuery<SuccessResponse<PendingMember[]>, ApiError>({
+		queryKey: ['pending-member'],
+		queryFn: async () => {
+			return await fetchData({
+				url: '/class/pending-member',
+				inputParams: {
+					...params,
+				},
+			});
+		},
+		...options,
+	});
 }

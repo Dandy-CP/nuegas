@@ -30,7 +30,13 @@ export function GetComment(
 		QueryKey,
 		number
 	>({
-		queryKey: ['comment', params?.post_id, params?.limit],
+		queryKey: [
+			'comment',
+			params?.post_id,
+			params?.assignment_id,
+			params?.assignments_result_id,
+			params?.limit,
+		],
 		initialPageParam: 1,
 		select: (data) => ({
 			items: data.pages.flatMap((page) => page.data),

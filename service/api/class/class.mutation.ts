@@ -63,16 +63,31 @@ export function InviteClassMember(
 }
 
 export function DeleteClassMember(
-	options?: UseMutationOptions<any, ApiError, { member_id: string }>
+	params?: { [key: string]: string | number },
+	options?: UseMutationOptions<any, ApiError>
 ) {
-	return useMutation<any, ApiError, { member_id: string }>({
-		mutationFn: async (body) => {
+	return useMutation<any, ApiError>({
+		mutationFn: async () => {
 			return await mutationData({
 				url: '/class/member',
 				method: 'DELETE',
-				inputParams: {
-					member_id: body.member_id,
-				},
+				inputParams: params,
+			});
+		},
+		...options,
+	});
+}
+
+export function DeletePendingMember(
+	params?: { [key: string]: string | number },
+	options?: UseMutationOptions<any, ApiError>
+) {
+	return useMutation<any, ApiError>({
+		mutationFn: async () => {
+			return await mutationData({
+				url: '/class/pending-member',
+				method: 'DELETE',
+				inputParams: params,
 			});
 		},
 		...options,
