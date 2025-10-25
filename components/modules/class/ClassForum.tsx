@@ -3,6 +3,7 @@ import { MoreVert, Settings } from '@mui/icons-material';
 import { Button, Card, IconButton, Tooltip } from '@mui/material';
 import { ClassDetail } from '@/types/class.types';
 import PostTimeline from './PostTimeline';
+import UpcomingTask from './partials/UpcomingTask';
 
 interface Props {
 	classId: string;
@@ -59,7 +60,7 @@ function ClassForum({ classId, classDetail, isClassOwner }: Props) {
 
 					<Card variant='outlined' className='p-3'>
 						<p className='text-sm font-semibold'>Upcoming task</p>
-						<p className='text-sm'>No upcoming task</p>
+						<UpcomingTask />
 					</Card>
 				</div>
 
