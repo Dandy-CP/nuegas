@@ -2,21 +2,12 @@ import parse from 'html-react-parser';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { Group, MoreVert } from '@mui/icons-material';
-import {
-	Button,
-	Dialog,
-	Divider,
-	IconButton,
-	Menu,
-	MenuItem,
-	Skeleton,
-} from '@mui/material';
+import { MoreVert } from '@mui/icons-material';
+import { Dialog, Divider, IconButton, Menu, MenuItem } from '@mui/material';
 import { DeleteAssignmentTask } from '@/service/api/assignment/assignment.mutation';
-import { GetComment } from '@/service/api/comment/comment.query';
 import { Assignment } from '@/types/assignment.types';
-import ErrorView from '../../ErrorView';
-import { AttachmentPreview, InputComment, PostComment } from '../partials';
+import { Comment } from '../../comment';
+import { AttachmentPreview } from '../partials';
 import AssignmentCollection from './partials/AssignmentCollection';
 import UpdateTaskContent from './partials/UpdateTaskContent';
 
@@ -51,19 +42,6 @@ function AssignmentDetail({
 			},
 		}
 	);
-
-	const {
-		data: commentData,
-		isError: isCommentError,
-		hasNextPage,
-		infiniteRef,
-		refetch: refetchComment,
-	} = GetComment({
-		assignment_id: assignmentId as string,
-	});
-
-	const comment = commentData?.items ?? [];
-	const totalComment = commentData?.totalItems ?? 0;
 
 	return (
 		<div className='mt-10 px-10'>
@@ -132,51 +110,7 @@ function AssignmentDetail({
 
 					<Divider sx={{ my: 1 }} />
 
-					<Button variant='text' size='small' startIcon={<Group />}>
-						{totalComment} Comment Class
-					</Button>
-
-					<div className='flex max-h-[300px] flex-col overflow-auto'>
-						{comment.map((value) => (
-							<PostComment
-								key={value.comment_id}
-								commentId={value.comment_id}
-								username={value.user.name}
-								content={value.content}
-								commentedAt={value.created_at}
-								onSuccess={() => {
-									refetchComment();
-								}}
-							/>
-						))}
-
-						{hasNextPage && (
-							<div ref={infiniteRef} className='mt-3 flex flex-col gap-3'>
-								{Array(2)
-									.fill('')
-									.map((_, index) => (
-										<Skeleton key={index} variant='rounded' height={80} />
-									))}
-							</div>
-						)}
-					</div>
-
-					{isCommentError && (
-						<div className='mt-5'>
-							<ErrorView
-								onRefetch={() => {
-									refetchComment();
-								}}
-							/>
-						</div>
-					)}
-
-					<InputComment
-						paramsId={{ assignment_id: assignmentId as string }}
-						onSuccess={() => {
-							refetchComment();
-						}}
-					/>
+					<Comment paramsId={{ assignment_id: assignmentId as string }} />
 				</div>
 
 				<div>

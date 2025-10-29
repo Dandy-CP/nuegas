@@ -2,23 +2,12 @@ import parse from 'html-react-parser';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { Group, MoreVert } from '@mui/icons-material';
-import {
-	Button,
-	Card,
-	Divider,
-	IconButton,
-	Menu,
-	MenuItem,
-	Skeleton,
-} from '@mui/material';
+import { MoreVert } from '@mui/icons-material';
+import { Card, Divider, IconButton, Menu, MenuItem } from '@mui/material';
 import { UserAvatar } from '@/components/elements';
-import { GetComment } from '@/service/api/comment/comment.query';
 import { DeletePost } from '@/service/api/post/post.mutation';
-import ErrorView from '../../ErrorView';
+import { Comment } from '../../comment';
 import AttachmentPreview from './AttachmentPreview';
-import InputComment from './InputComment';
-import PostComment from './PostComment';
 
 interface Props {
 	postId: string;
@@ -40,16 +29,7 @@ function PostCard({
 	onSuccess,
 }: Props) {
 	const [optionElement, setOptionElement] = useState<null | HTMLElement>(null);
-	const [commentLimit, setCommentLimit] = useState(1);
 	const openOption = Boolean(optionElement);
-
-	const { data, isError, hasNextPage, infiniteRef, refetch } = GetComment({
-		post_id: postId,
-		limit: commentLimit,
-	});
-
-	const comment = data?.items ?? [];
-	const totalComment = data?.totalItems ?? 0;
 
 	const { mutateAsync } = DeletePost(
 		{ post_id: postId },
@@ -114,60 +94,7 @@ function PostCard({
 
 			<Divider sx={{ marginY: 2 }} />
 
-			{comment.length !== 0 && (
-				<Button
-					variant='text'
-					size='small'
-					startIcon={<Group />}
-					onClick={() => {
-						setCommentLimit(5);
-					}}
-				>
-					{totalComment} Comment Class
-				</Button>
-			)}
-
-			<div className='flex max-h-[200px] flex-col overflow-auto'>
-				{comment.map((value) => (
-					<PostComment
-						key={value.comment_id}
-						commentId={value.comment_id}
-						username={value.user.name}
-						content={value.content}
-						commentedAt={value.created_at}
-						onSuccess={() => {
-							refetch();
-						}}
-					/>
-				))}
-
-				{hasNextPage && commentLimit !== 1 && (
-					<div ref={infiniteRef} className='mt-3 flex flex-col gap-3'>
-						{Array(2)
-							.fill('')
-							.map((_, index) => (
-								<Skeleton key={index} variant='rounded' height={80} />
-							))}
-					</div>
-				)}
-			</div>
-
-			{isError && (
-				<div className='mt-5'>
-					<ErrorView
-						onRefetch={() => {
-							refetch();
-						}}
-					/>
-				</div>
-			)}
-
-			<InputComment
-				paramsId={{ post_id: postId }}
-				onSuccess={() => {
-					refetch();
-				}}
-			/>
+			<Comment paramsId={{ post_id: postId }} />
 		</Card>
 	);
 }

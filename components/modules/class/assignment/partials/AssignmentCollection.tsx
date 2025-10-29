@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Add, Link, Person, Upload } from '@mui/icons-material';
-import { Button, Card, Dialog, Menu, MenuItem, Skeleton } from '@mui/material';
-import ErrorView from '@/components/modules/ErrorView';
+import { Add, Link, Upload } from '@mui/icons-material';
+import { Button, Card, Dialog, Menu, MenuItem } from '@mui/material';
+import { Comment } from '@/components/modules/comment';
 import {
 	CreateSubmissionResult,
 	UpdateSubmissionResult,
@@ -11,7 +11,7 @@ import { GetSubmissionDetail } from '@/service/api/assignment/assignment.query';
 import { GetComment } from '@/service/api/comment/comment.query';
 import AttachmentLinkForm from '../../AttachmentLinkForm';
 import UploadFileForm from '../../UploadFileForm';
-import { AttachmentPreview, InputComment, PostComment } from '../../partials';
+import { AttachmentPreview } from '../../partials';
 
 interface Props {
 	isAvailable: boolean;
@@ -37,19 +37,6 @@ function AssignmentCollection({ isAvailable, assignmentId }: Props) {
 	);
 
 	const submissionDetail = data?.data;
-
-	const {
-		data: commentData,
-		isError: isCommentError,
-		hasNextPage,
-		infiniteRef,
-		refetch: refetchComment,
-	} = GetComment({
-		assignments_result_id: submissionDetail?.result_id ?? '',
-	});
-
-	const comment = commentData?.items ?? [];
-	const totalComment = commentData?.totalItems ?? 0;
 
 	const { mutateAsync, isPending } = CreateSubmissionResult(
 		{
@@ -197,51 +184,10 @@ function AssignmentCollection({ isAvailable, assignmentId }: Props) {
 
 			{submissionDetail && (
 				<Card elevation={3} className='w-[300px] p-5'>
-					<Button variant='text' size='small' startIcon={<Person />}>
-						{totalComment} Private Comment
-					</Button>
-
-					<div className='flex max-h-[300px] flex-col overflow-auto'>
-						{comment.map((value) => (
-							<PostComment
-								key={value.comment_id}
-								commentId={value.comment_id}
-								username={value.user.name}
-								content={value.content}
-								commentedAt={value.created_at}
-								showAvatar={false}
-								onSuccess={() => {
-									refetchComment();
-								}}
-							/>
-						))}
-
-						{hasNextPage && (
-							<div ref={infiniteRef} className='mt-3 flex flex-col gap-3'>
-								{Array(2)
-									.fill('')
-									.map((_, index) => (
-										<Skeleton key={index} variant='rounded' height={80} />
-									))}
-							</div>
-						)}
-					</div>
-
-					{isCommentError && (
-						<div className='mt-5'>
-							<ErrorView
-								onRefetch={() => {
-									refetchComment();
-								}}
-							/>
-						</div>
-					)}
-
-					<InputComment
+					<Comment
 						showAvatar={false}
-						paramsId={{ assignments_result_id: submissionDetail?.result_id }}
-						onSuccess={() => {
-							refetchComment();
+						paramsId={{
+							assignments_result_id: submissionDetail?.result_id ?? '',
 						}}
 					/>
 				</Card>

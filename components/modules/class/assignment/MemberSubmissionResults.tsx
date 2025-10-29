@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
-import { Close, Group } from '@mui/icons-material';
-import {
-	Avatar,
-	Button,
-	Dialog,
-	Divider,
-	IconButton,
-	Skeleton,
-} from '@mui/material';
+import { Close } from '@mui/icons-material';
+import { Avatar, Button, Dialog, Divider, IconButton } from '@mui/material';
 import { GetAllSubmissionResult } from '@/service/api/assignment/assignment.query';
-import { GetComment } from '@/service/api/comment/comment.query';
 import ErrorView from '../../ErrorView';
-import { AttachmentPreview, InputComment, PostComment } from '../partials';
+import { Comment } from '../../comment';
+import { AttachmentPreview } from '../partials';
 import GivePointContent from './partials/GivePointContent';
 
 interface Props {
@@ -30,23 +23,11 @@ function MemberSubmissionResults({ assignmentId }: Props) {
 	const [selectedResult, setSelectedResult] = useState<SelectedResult | null>();
 	const [isGivePointModalShow, setIsGivePointModalShow] = useState(false);
 
-	const {
-		data: commentData,
-		isError: isCommentError,
-		hasNextPage,
-		infiniteRef,
-		refetch: refetchComment,
-	} = GetComment({
-		assignments_result_id: selectedResult?.result_id ?? '',
-	});
-
 	const { data, isError, refetch } = GetAllSubmissionResult({
 		assignment_id: assignmentId as string,
 	});
 
 	const memberResult = data?.data ?? [];
-	const comment = commentData?.items ?? [];
-	const totalComment = commentData?.totalItems ?? 0;
 
 	return (
 		<div className='flex h-[80vh] flex-row'>
@@ -135,51 +116,9 @@ function MemberSubmissionResults({ assignmentId }: Props) {
 						<div>
 							<Divider />
 
-							<Button variant='text' size='small' startIcon={<Group />}>
-								{totalComment} Private Comment
-							</Button>
-
-							<div className='flex max-h-[150px] flex-col overflow-auto'>
-								{comment.map((value) => (
-									<PostComment
-										key={value.comment_id}
-										commentId={value.comment_id}
-										username={value.user.name}
-										content={value.content}
-										commentedAt={value.created_at}
-										onSuccess={() => {
-											refetchComment();
-										}}
-									/>
-								))}
-
-								{hasNextPage && (
-									<div ref={infiniteRef} className='mt-3 flex flex-col gap-3'>
-										{Array(2)
-											.fill('')
-											.map((_, index) => (
-												<Skeleton key={index} variant='rounded' height={80} />
-											))}
-									</div>
-								)}
-							</div>
-
-							{isCommentError && (
-								<div className='mt-5'>
-									<ErrorView
-										onRefetch={() => {
-											refetchComment();
-										}}
-									/>
-								</div>
-							)}
-
-							<InputComment
+							<Comment
 								paramsId={{
 									assignments_result_id: selectedResult?.result_id ?? '',
-								}}
-								onSuccess={() => {
-									refetchComment();
 								}}
 							/>
 						</div>
