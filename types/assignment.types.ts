@@ -17,6 +17,12 @@ export interface Assignment {
 	};
 }
 
+export interface UpcomingTask {
+	assignments_id: string;
+	title: string;
+	due_date: string;
+}
+
 export interface Submission {
 	result_id: string;
 	attachment: string[];
