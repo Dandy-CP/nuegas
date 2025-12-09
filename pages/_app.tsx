@@ -1,5 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { QueryClientProvider } from '@tanstack/react-query';
+import moment from 'moment';
+import 'moment/locale/id';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -9,6 +11,9 @@ import { queryClient } from '@/config/queryClient';
 import theme from '@/config/theme';
 import AuthProvider from '@/context/AuthProvider';
 import '@/styles/globals.css';
+
+// Declare moment with "indonesia" locale
+moment.locale('id');
 
 export default function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
