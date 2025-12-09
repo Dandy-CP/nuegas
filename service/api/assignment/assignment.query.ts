@@ -4,6 +4,7 @@ import {
 	Assignment,
 	Submission,
 	SubmissionResult,
+	UpcomingTask,
 } from '@/types/assignment.types';
 import {
 	ApiError,
@@ -20,6 +21,22 @@ export function GetAssignmentList(
 		queryFn: async () => {
 			return await fetchData({
 				url: '/assignment',
+				inputParams: params,
+			});
+		},
+		...options,
+	});
+}
+
+export function GetUpcomingTask(
+	params?: { [key: string]: string | number },
+	options?: UseQueryOptions<SuccessResponse<UpcomingTask[]>, ApiError>
+) {
+	return useQuery<SuccessResponse<UpcomingTask[]>, ApiError>({
+		queryKey: ['upcoming-task', params],
+		queryFn: async () => {
+			return await fetchData({
+				url: '/assignment/upcoming-task',
 				inputParams: params,
 			});
 		},

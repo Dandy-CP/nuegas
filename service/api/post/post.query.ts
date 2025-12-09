@@ -25,7 +25,7 @@ export function GetClassPostTimeline(
 		QueryKey,
 		number
 	>({
-		queryKey: ['post-timeline'],
+		queryKey: ['post-timeline', params],
 		enabled: params?.class_id !== undefined,
 		initialPageParam: 1,
 		select: (data) => data.pages.flatMap((page) => page.data),
