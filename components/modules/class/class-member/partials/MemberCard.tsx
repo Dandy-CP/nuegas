@@ -1,7 +1,9 @@
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { MoreVert } from '@mui/icons-material';
 import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
+import { StartNewChat } from '@/service/api/chat/chat.mutation';
 import {
 	DeleteClassMember,
 	DeletePendingMember,
@@ -23,12 +25,15 @@ function MemberCard({
 	name,
 	profileImage,
 	memberId,
+	userId,
 	isClassOwner,
 	showOption = true,
 	onRefetch,
 }: Props) {
 	const [optionElement, setOptionElement] = useState<null | HTMLElement>(null);
 	const openOption = Boolean(optionElement);
+
+	const router = useRouter();
 
 	const { mutateAsync, isPending } = DeleteClassMember(
 		{ member_id: memberId },
@@ -57,6 +62,21 @@ function MemberCard({
 		}
 	);
 
+	const { mutateAsync: requestStartNewChat, isPending: isStartNewChatPending } =
+		StartNewChat({
+			onSuccess() {
+				router.push('/dashboard/message');
+			},
+			onError(error) {
+				if (error.response.data.status === 422) {
+					router.push('/dashboard/message');
+					return;
+				}
+
+				toast.error('Error on start new Chat');
+			},
+		});
+
 	return (
 		<div className='flex cursor-pointer flex-row items-center justify-between rounded-lg p-3 hover:bg-gray-200'>
 			<div className='flex flex-row items-center gap-5'>
@@ -69,7 +89,7 @@ function MemberCard({
 
 			{showOption && (
 				<IconButton
-					disabled={isPending || isDeletePending}
+					disabled={isPending || isDeletePending || isStartNewChatPending}
 					onClick={(event) => setOptionElement(event.currentTarget)}
 				>
 					<MoreVert />
@@ -91,6 +111,9 @@ function MemberCard({
 					<MenuItem
 						onClick={() => {
 							setOptionElement(null);
+							requestStartNewChat({
+								receiverId: userId,
+							});
 						}}
 					>
 						Send Message

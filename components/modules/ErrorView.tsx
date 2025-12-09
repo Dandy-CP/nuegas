@@ -5,10 +5,11 @@ import { Button } from '@mui/material';
 
 interface Props {
 	message?: string;
-	onRefetch: () => void;
+	showRefetch?: boolean;
+	onRefetch?: () => void;
 }
 
-function ErrorView({ message, onRefetch }: Props) {
+function ErrorView({ message, showRefetch = true, onRefetch }: Props) {
 	return (
 		<div className='flex flex-col items-center gap-5'>
 			<Image
@@ -23,13 +24,17 @@ function ErrorView({ message, onRefetch }: Props) {
 				{!message ? 'Opps something wrong, please try again' : message}
 			</p>
 
-			<Button
-				variant='contained'
-				onClick={() => onRefetch()}
-				startIcon={<Refresh />}
-			>
-				Try Again
-			</Button>
+			{showRefetch && (
+				<Button
+					variant='contained'
+					onClick={() => {
+						onRefetch && onRefetch();
+					}}
+					startIcon={<Refresh />}
+				>
+					Try Again
+				</Button>
+			)}
 		</div>
 	);
 }
