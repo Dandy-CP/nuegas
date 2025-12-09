@@ -28,14 +28,15 @@ function JoinedClassList() {
 			</div>
 
 			<div className='mt-10 flex flex-row flex-wrap gap-5'>
-				{joinedClassList.map((value) => (
-					<ClassCard
-						key={value.class_id}
-						classId={value.class_id}
-						className={value.name}
-						classDescription={value.description}
-					/>
-				))}
+				{!isFetching &&
+					joinedClassList.map((value) => (
+						<ClassCard
+							key={value.class_id}
+							classId={value.class_id}
+							className={value.name}
+							classDescription={value.description}
+						/>
+					))}
 
 				{isFetching &&
 					Array(3)

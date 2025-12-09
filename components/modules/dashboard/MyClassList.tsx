@@ -28,15 +28,16 @@ function MyClassList() {
 			</div>
 
 			<div className='mt-10 flex flex-row flex-wrap gap-5'>
-				{myClassList.map((value) => (
-					<ClassCard
-						key={value.class_id}
-						classId={value.class_id}
-						className={value.name}
-						classDescription={value.description}
-						type='my-class'
-					/>
-				))}
+				{!isFetching &&
+					myClassList.map((value) => (
+						<ClassCard
+							key={value.class_id}
+							classId={value.class_id}
+							className={value.name}
+							classDescription={value.description}
+							type='my-class'
+						/>
+					))}
 
 				{isFetching &&
 					Array(3)

@@ -59,8 +59,8 @@ function ClassForum({ classId, classDetail, isClassOwner }: Props) {
 					)}
 
 					<Card variant='outlined' className='p-3'>
-						<p className='text-sm font-semibold'>Upcoming task</p>
-						<UpcomingTask />
+						<p className='mb-2 text-sm font-semibold'>Upcoming task</p>
+						<UpcomingTask classId={classId} />
 					</Card>
 				</div>
 

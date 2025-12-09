@@ -1,8 +1,8 @@
 import parse from 'html-react-parser';
 import moment from 'moment';
 import React, { useState } from 'react';
-import { AssignmentOutlined, MoreVert } from '@mui/icons-material';
-import { Button, Divider, IconButton, Menu, MenuItem } from '@mui/material';
+import { AssignmentOutlined } from '@mui/icons-material';
+import { Button, Divider } from '@mui/material';
 import { AttachmentPreview } from '../../partials';
 
 interface Props {
@@ -24,10 +24,7 @@ function AssignmentCard({
 	dueDate,
 	isAvailable,
 }: Props) {
-	const [optionElement, setOptionElement] = useState<null | HTMLElement>(null);
 	const [showMore, setShowMore] = useState(false);
-
-	const openOption = Boolean(optionElement);
 
 	return (
 		<div className={`rounded-md bg-white ${showMore ? 'shadow-md' : ''}`}>
