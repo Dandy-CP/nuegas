@@ -17,6 +17,8 @@ interface Props {
 	userId: string;
 	isClassOwner: boolean;
 	showOption?: boolean;
+	showRemoveOption?: boolean;
+	showMessageOption?: boolean;
 	onRefetch?: () => void;
 }
 
@@ -28,6 +30,8 @@ function MemberCard({
 	userId,
 	isClassOwner,
 	showOption = true,
+	showMessageOption = true,
+	showRemoveOption = true,
 	onRefetch,
 }: Props) {
 	const [optionElement, setOptionElement] = useState<null | HTMLElement>(null);
@@ -107,7 +111,7 @@ function MemberCard({
 					},
 				}}
 			>
-				{type === 'MEMBER' && (
+				{type === 'MEMBER' && showMessageOption && (
 					<MenuItem
 						onClick={() => {
 							setOptionElement(null);
@@ -120,7 +124,7 @@ function MemberCard({
 					</MenuItem>
 				)}
 
-				{isClassOwner && (
+				{isClassOwner && showRemoveOption && (
 					<MenuItem
 						onClick={() => {
 							setOptionElement(null);

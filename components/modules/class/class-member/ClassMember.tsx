@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PersonAddOutlined } from '@mui/icons-material';
 import { Dialog, Divider, IconButton } from '@mui/material';
 import { Loader } from '@/components/elements';
+import { useAuth } from '@/hooks';
 import {
 	GetClassMember,
 	GetPendingMember,
@@ -17,6 +18,8 @@ interface Props {
 
 function ClassMember({ classId, isClassOwner }: Props) {
 	const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+
+	const { authData } = useAuth();
 
 	const { data, isFetching, isError, refetch } = GetClassMember({
 		class_id: classId,
@@ -56,7 +59,7 @@ function ClassMember({ classId, isClassOwner }: Props) {
 					profileImage={owner[0]?.user.profile_image}
 					memberId={owner[0]?.class_member_id}
 					userId={owner[0]?.user.user_id}
-					showOption={false}
+					showOption={owner[0]?.user.user_id !== authData?.user_id}
 					onRefetch={() => {
 						refetch();
 					}}
@@ -123,6 +126,7 @@ function ClassMember({ classId, isClassOwner }: Props) {
 						profileImage={value.user.profile_image}
 						memberId={value.class_member_id}
 						userId={value.user.user_id}
+						showOption={value.user.user_id !== authData?.user_id}
 						onRefetch={() => {
 							refetch();
 						}}
