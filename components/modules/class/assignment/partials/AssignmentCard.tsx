@@ -6,7 +6,6 @@ import { Button, Divider } from '@mui/material';
 import { AttachmentPreview } from '../../partials';
 
 interface Props {
-	classId: string;
 	assignmentId: string;
 	title: string;
 	content: string;
@@ -16,7 +15,6 @@ interface Props {
 }
 
 function AssignmentCard({
-	classId,
 	assignmentId,
 	title,
 	content,
@@ -63,7 +61,7 @@ function AssignmentCard({
 
 					<Button
 						sx={{ mt: 1 }}
-						href={`/dashboard/class/assignment/${assignmentId}?classId=${classId}`}
+						href={`/dashboard/class/assignment/${assignmentId}`}
 					>
 						See instruction
 					</Button>

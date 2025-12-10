@@ -1,5 +1,6 @@
 import parse from 'html-react-parser';
 import moment from 'moment';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { MoreVert } from '@mui/icons-material';
@@ -47,6 +48,13 @@ function AssignmentDetail({
 		<div className='mt-10 px-10'>
 			<div className='flex flex-row justify-between gap-20'>
 				<div className='w-full'>
+					<Link
+						href={`/dashboard/class/${classId}`}
+						className='font-semibold hover:text-blue-500 hover:underline'
+					>
+						{assignmentDetail?.class.name}
+					</Link>
+
 					<div className='flex flex-row items-center justify-between'>
 						<h1 className='text-3xl'>{assignmentDetail?.title}</h1>
 

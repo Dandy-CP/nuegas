@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Add } from '@mui/icons-material';
 import { Button, Dialog, Divider } from '@mui/material';
+import { Loader } from '@/components/elements';
 import { GetAssignmentList } from '@/service/api/assignment/assignment.query';
 import { Assignment } from '@/types/assignment.types';
+import ErrorView from '../../ErrorView';
 import AssignmentCard from './partials/AssignmentCard';
 import CreateTaskContent from './partials/CreateTaskContent';
 
@@ -15,7 +17,9 @@ interface Props {
 function ClassAssignment({ classId, isClassOwner, className }: Props) {
 	const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
 
-	const { data, refetch } = GetAssignmentList({ class_id: classId });
+	const { data, isFetching, isError, refetch } = GetAssignmentList({
+		class_id: classId,
+	});
 
 	const assignmentList = data?.data ?? [];
 
@@ -42,6 +46,18 @@ function ClassAssignment({ classId, isClassOwner, className }: Props) {
 		}
 	);
 
+	if (isError) {
+		return (
+			<div className='my-40'>
+				<ErrorView onRefetch={() => refetch()} />
+			</div>
+		);
+	}
+
+	if (isFetching) {
+		return <Loader />;
+	}
+
 	return (
 		<div>
 			{isClassOwner && (
@@ -66,7 +82,6 @@ function ClassAssignment({ classId, isClassOwner, className }: Props) {
 					{assignment.map((value) => (
 						<AssignmentCard
 							key={value.assignments_id}
-							classId={classId}
 							assignmentId={value.assignments_id}
 							title={value.title}
 							content={value.content}
