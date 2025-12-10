@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { Divider, Tab, Tabs } from '@mui/material';
+import { Loader } from '@/components/elements';
 import { ErrorView } from '@/components/modules';
 import {
 	AssignmentTabDetail,
@@ -13,9 +14,8 @@ function AssignmentDetail() {
 
 	const router = useRouter();
 	const assignmentId = router.query.assignmentId as string | undefined;
-	const classId = router.query.classId as string | undefined;
 
-	const { data, isError, refetch } = GetAssignmentDetail(
+	const { data, isError, isFetching, refetch } = GetAssignmentDetail(
 		{ assignment_id: assignmentId as string },
 		{ queryKey: [assignmentId], enabled: assignmentId !== undefined }
 	);
@@ -30,6 +30,10 @@ function AssignmentDetail() {
 				}}
 			/>
 		);
+	}
+
+	if (isFetching) {
+		return <Loader />;
 	}
 
 	return (
@@ -55,7 +59,7 @@ function AssignmentDetail() {
 						refetch();
 					}}
 					assignmentId={assignmentId}
-					classId={classId}
+					classId={assignmentDetail?.class.class_id}
 				/>
 			)}
 
