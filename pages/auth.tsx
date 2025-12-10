@@ -114,7 +114,10 @@ function Auth() {
 
 					<span className='text-sm'>
 						New to Nuegas?{' '}
-						<Link href='#' className='text-sm text-blue-500 hover:underline'>
+						<Link
+							href='/signup'
+							className='text-sm text-blue-500 hover:underline'
+						>
 							Sign Up
 						</Link>
 					</span>
