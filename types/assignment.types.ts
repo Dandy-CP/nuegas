@@ -15,6 +15,10 @@ export interface Assignment {
 		topic_id: string;
 		name: string;
 	};
+	class: {
+		class_id: string;
+		name: string;
+	};
 }
 
 export interface UpcomingTask {
