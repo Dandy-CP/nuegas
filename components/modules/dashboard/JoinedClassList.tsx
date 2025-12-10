@@ -14,7 +14,7 @@ function JoinedClassList() {
 	const joinedClassList = data?.data ?? [];
 
 	return (
-		<div className='mt-10'>
+		<div>
 			<div className='flex flex-row justify-between'>
 				<h1 className='text-2xl font-bold'>Joined Class</h1>
 				<Button
@@ -55,7 +55,7 @@ function JoinedClassList() {
 			</div>
 
 			{!isFetching && joinedClassList.length === 0 && (
-				<div className='flex w-full flex-col items-center gap-10'>
+				<div className='mt-10 flex w-full flex-col items-center gap-10'>
 					<Image
 						src='/images/empty_state.svg'
 						alt=''

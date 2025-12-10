@@ -56,7 +56,7 @@ function MyClassList() {
 			</div>
 
 			{!isFetching && !isError && myClassList.length === 0 && (
-				<div className='flex w-full flex-col items-center gap-10'>
+				<div className='mt-10 flex w-full flex-col items-center gap-10'>
 					<Image
 						src='/images/empty_state.svg'
 						alt=''
