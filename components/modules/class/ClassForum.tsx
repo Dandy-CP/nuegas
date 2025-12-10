@@ -1,6 +1,16 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { MoreVert, Settings } from '@mui/icons-material';
-import { Button, Card, IconButton, Tooltip } from '@mui/material';
+import { toast } from 'react-toastify';
+import { Delete, Edit, MoreVert, Settings } from '@mui/icons-material';
+import {
+	Button,
+	Card,
+	IconButton,
+	Menu,
+	MenuItem,
+	Tooltip,
+} from '@mui/material';
+import { DeleteClass } from '@/service/api/class/class.mutation';
 import { ClassDetail } from '@/types/class.types';
 import PostTimeline from './PostTimeline';
 import UpcomingTask from './partials/UpcomingTask';
@@ -13,6 +23,24 @@ interface Props {
 
 function ClassForum({ classId, classDetail, isClassOwner }: Props) {
 	const [isWritingPost, setIsWritingPost] = useState(false);
+	const [optionElement, setOptionElement] = useState<null | HTMLElement>(null);
+
+	const openOption = Boolean(optionElement);
+
+	const router = useRouter();
+
+	const { mutateAsync, isPending } = DeleteClass(
+		{ class_id: classId },
+		{
+			onSuccess() {
+				router.push('/dashboard');
+				toast.success('Success delete class');
+			},
+			onError() {
+				toast.error('Error on delete class');
+			},
+		}
+	);
 
 	return (
 		<div>
@@ -28,13 +56,55 @@ function ClassForum({ classId, classDetail, isClassOwner }: Props) {
 					</div>
 
 					{isClassOwner && (
-						<Button
-							variant='contained'
-							startIcon={<Settings />}
-							sx={{ backgroundColor: 'white', color: '#546FFF' }}
-						>
-							Class Options
-						</Button>
+						<>
+							<Button
+								variant='contained'
+								startIcon={<Settings />}
+								disabled={isPending}
+								sx={{ backgroundColor: 'white', color: '#546FFF' }}
+								onClick={(event) => setOptionElement(event.currentTarget)}
+							>
+								Class Options
+							</Button>
+
+							<Menu
+								id='basic-menu'
+								anchorEl={optionElement}
+								open={openOption}
+								onClose={() => setOptionElement(null)}
+								slotProps={{
+									paper: {
+										sx: {
+											width: '12%',
+										},
+									},
+									list: {
+										'aria-labelledby': 'basic-button',
+									},
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setOptionElement(null);
+									}}
+									sx={{ gap: 1 }}
+								>
+									<Edit fontSize='small' />
+									Edit Class
+								</MenuItem>
+
+								<MenuItem
+									onClick={() => {
+										setOptionElement(null);
+										mutateAsync();
+									}}
+									sx={{ gap: 1, color: 'red' }}
+								>
+									<Delete fontSize='small' />
+									Delete Class
+								</MenuItem>
+							</Menu>
+						</>
 					)}
 				</div>
 			</div>

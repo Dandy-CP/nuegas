@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PersonAddOutlined } from '@mui/icons-material';
 import { Dialog, Divider, IconButton } from '@mui/material';
+import { Loader } from '@/components/elements';
 import {
 	GetClassMember,
 	GetPendingMember,
@@ -17,9 +18,12 @@ interface Props {
 function ClassMember({ classId, isClassOwner }: Props) {
 	const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
-	const { data, isError, refetch } = GetClassMember({ class_id: classId });
+	const { data, isFetching, isError, refetch } = GetClassMember({
+		class_id: classId,
+	});
 	const {
 		data: pendingMemberData,
+		isFetching: isPendingMemberFetching,
 		isError: isPendingMemberError,
 		refetch: refetchPendingMember,
 	} = GetPendingMember({ class_id: classId });
@@ -34,6 +38,10 @@ function ClassMember({ classId, isClassOwner }: Props) {
 				<ErrorView onRefetch={() => refetch()} />
 			</div>
 		);
+	}
+
+	if (isFetching || isPendingMemberFetching) {
+		return <Loader />;
 	}
 
 	return (

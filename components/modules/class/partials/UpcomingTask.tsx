@@ -18,7 +18,7 @@ function UpcomingTask({ classId }: Props) {
 			{task.map((value) => (
 				<Link
 					key={value.assignments_id}
-					href={`/dashboard/class/assignment/${value.assignments_id}?classId=${classId}`}
+					href={`/dashboard/class/assignment/${value.assignments_id}`}
 					className='text-sm hover:text-blue-500 hover:underline'
 				>
 					<p>{value.title}</p>
