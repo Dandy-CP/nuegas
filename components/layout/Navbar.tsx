@@ -5,6 +5,7 @@ import {
 	ListItemIcon,
 	Menu,
 	MenuItem,
+	Skeleton,
 	Tooltip,
 } from '@mui/material';
 import { useAuth } from '@/hooks';
@@ -24,7 +25,12 @@ function Navbar() {
 	return (
 		<div className='flex h-[80px] w-full flex-row items-center justify-between px-6'>
 			<div className='flex flex-col gap-1'>
-				<h1 className='text-2xl font-semibold'>Hi, {authData?.name}</h1>
+				{authData?.name ? (
+					<h1 className='text-2xl font-semibold'>Hi, {authData?.name}</h1>
+				) : (
+					<Skeleton width={200} height={50} />
+				)}
+
 				<p className='text-sm font-medium'>Lets finish your task today!</p>
 			</div>
 

@@ -21,14 +21,14 @@ function Sidebar({ path }: Props) {
 			href: '/dashboard',
 		},
 		{
-			label: 'My Task',
-			Icon: ChecklistOutlined,
-			href: '/dashboard/task',
-		},
-		{
 			label: 'My Class',
 			Icon: SchoolOutlined,
 			href: '/dashboard/class',
+		},
+		{
+			label: 'My Task',
+			Icon: ChecklistOutlined,
+			href: '/dashboard/task',
 		},
 		{
 			label: 'Message',
