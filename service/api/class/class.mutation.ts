@@ -25,6 +25,38 @@ export function CreateClass(
 	});
 }
 
+export function EditClass(
+	params?: { [key: string]: string | number },
+	options?: UseMutationOptions<any, ApiError>
+) {
+	return useMutation<any, ApiError>({
+		mutationFn: async () => {
+			return await mutationData({
+				url: '/class/edit',
+				method: 'PUT',
+				inputParams: params,
+			});
+		},
+		...options,
+	});
+}
+
+export function DeleteClass(
+	params?: { [key: string]: string | number },
+	options?: UseMutationOptions<any, ApiError>
+) {
+	return useMutation<any, ApiError>({
+		mutationFn: async () => {
+			return await mutationData({
+				url: '/class',
+				method: 'DELETE',
+				inputParams: params,
+			});
+		},
+		...options,
+	});
+}
+
 export function JoinClass(
 	options?: UseMutationOptions<any, ApiError, JoinClassBody>
 ) {
