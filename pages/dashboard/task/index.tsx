@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import React from 'react';
 import { ErrorView } from '@/components/modules';
 import AssignmentCard from '@/components/modules/class/assignment/partials/AssignmentCard';
 import { GetMyTask } from '@/service/api/user/user.query';
@@ -12,7 +11,7 @@ function MyTaskPage() {
 		<div>
 			<h1 className='text-2xl font-bold'>My Task</h1>
 
-			<div className='mt-10'>
+			<div className='mt-10 flex flex-col gap-3'>
 				{myTask.map((value) => (
 					<AssignmentCard
 						key={value.assignments_id}

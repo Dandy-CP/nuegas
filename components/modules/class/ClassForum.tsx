@@ -10,6 +10,7 @@ import {
 	MenuItem,
 	Tooltip,
 } from '@mui/material';
+import { AlertDialog } from '@/components/elements';
 import { DeleteClass } from '@/service/api/class/class.mutation';
 import { ClassDetail } from '@/types/class.types';
 import PostTimeline from './PostTimeline';
@@ -24,6 +25,7 @@ interface Props {
 function ClassForum({ classId, classDetail, isClassOwner }: Props) {
 	const [isWritingPost, setIsWritingPost] = useState(false);
 	const [optionElement, setOptionElement] = useState<null | HTMLElement>(null);
+	const [isDeleteDialogShow, setShowDeleteDialog] = useState(false);
 
 	const openOption = Boolean(optionElement);
 
@@ -96,7 +98,7 @@ function ClassForum({ classId, classDetail, isClassOwner }: Props) {
 								<MenuItem
 									onClick={() => {
 										setOptionElement(null);
-										mutateAsync();
+										setShowDeleteDialog(true);
 									}}
 									sx={{ gap: 1, color: 'red' }}
 								>
@@ -143,6 +145,15 @@ function ClassForum({ classId, classDetail, isClassOwner }: Props) {
 					/>
 				</div>
 			</div>
+
+			<AlertDialog
+				isOpen={isDeleteDialogShow}
+				title='Delete this class?'
+				message='Are you sure delete this class?'
+				isLoading={isPending}
+				onAccept={() => mutateAsync()}
+				onClose={() => setShowDeleteDialog(false)}
+			/>
 		</div>
 	);
 }
